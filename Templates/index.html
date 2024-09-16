@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Front-End</title>
+    <script>
+        async function adicionarLivro() {
+            const titulo = document.getElementById('titulo').value;
+            const autor = document.getElementById('autor').value;
+            const ano = document.getElementById('ano').value;
+            const temas = document.getElementById('temas').value;
+
+            const livro = {
+                titulo: titulo,
+                autor: autor,
+                ano: ano,
+                temas: temas
+            };
+
+            const response = await fetch('http://127.0.0.1:5000/api/livros', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(livro)
+            });
+
+            const data = await response.json();
+            console.log(data);
+            alert(data.mensagem);
+        }
+
+        async function listarLivros() {
+            const response = await fetch('http://127.0.0.1:5000/api/livros');
+            const livros = await response.json();
+
+            let lista = document.getElementById('lista-livros');
+            lista.innerHTML = '';  // Limpa a lista antes de popular
+
+            livros.forEach(livro => {
+                let li = document.createElement('li');
+                li.textContent = `Título: ${livro.titulo}, Autor: ${livro.autor}, Ano: ${livro.ano}, Temas: ${livro.temas.join(', ')}`;
+                lista.appendChild(li);
+            });
+        }
+
+        window.onload = listarLivros;
+    </script>
+</head>
+<body>
+    <h1>Biblioteca de Livros - Front-End</h1>
+
+    <h2>Adicionar Livro</h2>
+    <form onsubmit="adicionarLivro(); return false;">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" required><br>
+
+        <label for="autor">Autor:</label>
+        <input type="text" id="autor" required><br>
+
+        <label for="ano">Ano de Publicação:</label>
+        <input type="text" id="ano" required><br>
+
+        <label for="temas">Temas (separados por vírgula):</label>
+        <input type="text" id="temas" required><br>
+
+        <button type="submit">Adicionar Livro</button>
+    </form>
+
+    <h2>Livros no Acervo</h2>
+    <ul id="lista-livros"></ul>
+</body>
+</html>
